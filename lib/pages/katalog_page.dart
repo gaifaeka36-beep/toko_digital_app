@@ -21,7 +21,8 @@ class _KatalogPageState extends State<KatalogPage> {
   }
 
   Future<void> _loadData() async {
-    await Provider.of<CartProvider>(context, listen: false).fetchProductsAndCart();
+    await Provider.of<CartProvider>(context, listen: false)
+        .fetchProductsAndCart();
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -33,20 +34,45 @@ class _KatalogPageState extends State<KatalogPage> {
   Widget build(BuildContext context) {
     const Color yellowHeader = Color(0xFFD6D13A);
     const Color bgKrem = Color(0xFFFFF7C2);
+    const Color cardBg = Color(0xFFF7F2C5);
     const Color textOlive = Color(0xFF7A7311);
     const Color greenText = Color(0xFF2EAA32);
 
     return Scaffold(
       backgroundColor: bgKrem,
-      appBar: AppBar(
-        backgroundColor: yellowHeader,
-        elevation: 0,
-        title: const Text(
-          'QEASHOOP',
-          style: TextStyle(
-            color: textOlive,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: Container(
+          color: yellowHeader,
+          child: SafeArea(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'TOKO DIGITAL APP',
+                    style: TextStyle(
+                      color: textOlive,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'QEASHOOP',
+                    style: TextStyle(
+                      color: textOlive,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -71,7 +97,8 @@ class _KatalogPageState extends State<KatalogPage> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: greenText),
                     onPressed: _loadData,
-                    child: const Text('Muat Ulang', style: TextStyle(color: Colors.white)),
+                    child: const Text('Muat Ulang',
+                        style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -79,56 +106,57 @@ class _KatalogPageState extends State<KatalogPage> {
           }
 
           return GridView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 0.72,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
             ),
             itemCount: cartProvider.products.length,
             itemBuilder: (context, index) {
               final product = cartProvider.products[index];
               return Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF7F2C5),
-                  borderRadius: BorderRadius.circular(12),
+                  color: cardBg,
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05), // Diperbaiki dari withOpacity
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            product.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.electrical_services,
-                              size: 50,
-                              color: textOlive,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              product.imageUrl,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                Icons.electrical_services,
+                                size: 40,
+                                color: textOlive,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
+                      const SizedBox(height: 8),
+                      Text(
                         product.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -138,30 +166,26 @@ class _KatalogPageState extends State<KatalogPage> {
                           fontSize: 13,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 2.0),
-                      child: Text(
+                      const SizedBox(height: 2),
+                      Text(
                         'Rp ${product.price.toStringAsFixed(0)}',
                         style: const TextStyle(
                           color: greenText,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 13,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 32,
-                        child: ElevatedButton(
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 34,
+                        child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: greenText,
-                            foregroundColor: Colors.white,
+                            backgroundColor: yellowHeader,
+                            elevation: 0,
                             padding: EdgeInsets.zero,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
                           onPressed: () {
@@ -174,50 +198,68 @@ class _KatalogPageState extends State<KatalogPage> {
                               ),
                             );
                           },
-                          child: const Text(
-                            'Tambah',
+                          icon: const Icon(
+                            Icons.shopping_cart,
+                            size: 16,
+                            color: greenText,
+                          ),
+                          label: const Text(
+                            'Beli',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: yellowHeader,
-        selectedItemColor: textOlive,
-        unselectedItemColor: textOlive.withValues(alpha: 0.5), // Diperbaiki dari withOpacity
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const KeranjangPage()),
-            );
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }
+      bottomNavigationBar: Consumer<CartProvider>(
+        builder: (context, cartProvider, child) {
+          return BottomNavigationBar(
+            backgroundColor: yellowHeader,
+            selectedItemColor: greenText,
+            unselectedItemColor: greenText,
+            currentIndex: _selectedIndex,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            onTap: (index) {
+              if (index == 1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const KeranjangPage()),
+                );
+              } else {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              }
+            },
+            items: [
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined, size: 30),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: Badge(
+                  label: Text('${cartProvider.totalItemCount}'),
+                  isLabelVisible: cartProvider.totalItemCount > 0,
+                  backgroundColor: Colors.red,
+                  child: const Icon(Icons.shopping_cart_outlined, size: 28),
+                ),
+                label: '',
+              ),
+            ],
+          );
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: '',
-          ),
-        ],
       ),
     );
   }

@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 
-class KeranjangPage extends StatelessWidget {
+class KeranjangPage extends StatefulWidget {
   const KeranjangPage({super.key});
+
+  @override
+  State<KeranjangPage> createState() => _KeranjangPageState();
+}
+
+class _KeranjangPageState extends State<KeranjangPage> {
+  int _selectedIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -11,166 +18,262 @@ class KeranjangPage extends StatelessWidget {
     const Color bgKrem = Color(0xFFFFF7C2);
     const Color textOlive = Color(0xFF7A7311);
     const Color greenText = Color(0xFF2EAA32);
+    const Color cardBg = Color(0xFFF8F4CA);
 
     return Scaffold(
       backgroundColor: bgKrem,
-      appBar: AppBar(
-        backgroundColor: yellowHeader,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: textOlive),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Keranjang Belanja',
-          style: TextStyle(
-            color: textOlive,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: yellowHeader,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+            ),
+          ),
+          child: const SafeArea(
+            child: Center(
+              child: Text(
+                'Keranjang Belanja',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+            ),
           ),
         ),
       ),
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
-          if (cartProvider.cartItems.isEmpty) {
-            return const Center(
-              child: Text(
-                'Keranjang masih kosong',
-                style: TextStyle(color: textOlive, fontSize: 16),
+          return Column(
+            children: [
+              Expanded(
+                child: cartProvider.cartItems.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Keranjang masih kosong',
+                          style: TextStyle(color: textOlive, fontSize: 16),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
+                        itemCount: cartProvider.cartItems.length,
+                        itemBuilder: (context, index) {
+                          final item = cartProvider.cartItems[index];
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: cardBg,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 65,
+                                  height: 65,
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Image.network(
+                                    item.imageUrl,
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(Icons.broken_image,
+                                                color: Colors.black38),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: textOlive,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Rp ${item.price.toStringAsFixed(0)} × ${item.quantity}',
+                                        style: TextStyle(
+                                          color: textOlive.withValues(alpha: 0.8),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: yellowHeader,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          cartProvider.updateQuantity(
+                                              item.id, item.quantity - 1);
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 2),
+                                          child: Text(
+                                            '-',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6),
+                                        child: Text(
+                                          '${item.quantity}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          cartProvider.updateQuantity(
+                                              item.id, item.quantity + 1);
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 2),
+                                          child: Text(
+                                            '+',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: greenText,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
               ),
-            );
-          }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: cartProvider.cartItems.length,
-            itemBuilder: (context, index) {
-              final item = cartProvider.cartItems[index];
-              return Card(
-                color: const Color(0xFFF7F2C5),
-                margin: const EdgeInsets.only(bottom: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: yellowHeader,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Text(
+                        'Total Biaya:',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                       Container(
-                        width: 60,
-                        height: 60,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Image.network(
-                          item.imageUrl,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.broken_image, color: Colors.black38),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: textOlive,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              'Rp ${item.price.toStringAsFixed(0)}',
-                              style: const TextStyle(
-                                color: greenText,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          'Rp ${cartProvider.totalPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: greenText,
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline, color: textOlive),
-                            onPressed: () {
-                              cartProvider.updateQuantity(item.id, item.quantity - 1);
-                            },
-                          ),
-                          Text(
-                            '${item.quantity}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline, color: textOlive),
-                            onPressed: () {
-                              cartProvider.updateQuantity(item.id, item.quantity + 1);
-                            },
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),
-              );
-            },
+              ),
+            ],
           );
         },
       ),
       bottomNavigationBar: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: yellowHeader,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Total Pembayaran:',
-                      style: TextStyle(fontSize: 12, color: textOlive),
-                    ),
-                    Text(
-                      'Rp ${cartProvider.totalPrice.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: greenText,
-                      ),
-                    ),
-                  ],
+          return BottomNavigationBar(
+            backgroundColor: yellowHeader,
+            selectedItemColor: greenText,
+            unselectedItemColor: greenText,
+            currentIndex: _selectedIndex,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            onTap: (index) {
+              if (index == 0) {
+                Navigator.pop(context);
+              } else {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              }
+            },
+            items: [
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined, size: 30),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: Badge(
+                  label: Text('${cartProvider.totalItemCount}'),
+                  isLabelVisible: cartProvider.totalItemCount > 0,
+                  backgroundColor: Colors.red,
+                  child: const Icon(Icons.shopping_cart_outlined, size: 28),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: greenText,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: cartProvider.cartItems.isEmpty
-                      ? null
-                      : () {
-                          cartProvider.clearCart();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Pesanan berhasil dibuat!')),
-                          );
-                        },
-                  child: const Text('Checkout'),
-                ),
-              ],
-            ),
+                label: '',
+              ),
+            ],
           );
         },
       ),
