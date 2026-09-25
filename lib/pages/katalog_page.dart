@@ -95,7 +95,7 @@ class _KatalogPageState extends State<KatalogPage> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05), // Diperbaiki dari withOpacity
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -194,7 +194,7 @@ class _KatalogPageState extends State<KatalogPage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: yellowHeader,
         selectedItemColor: textOlive,
-        unselectedItemColor: textOlive.withOpacity(0.5),
+        unselectedItemColor: textOlive.withValues(alpha: 0.5), // Diperbaiki dari withOpacity
         currentIndex: _selectedIndex,
         onTap: (index) {
           if (index == 1) {
