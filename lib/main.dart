@@ -4,7 +4,14 @@ import 'providers/cart_provider.dart';
 import 'pages/katalog_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,17 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CartProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Toko Digital App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
-        ),
-        home: const KatalogPage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'QEASHOOP',
+      theme: ThemeData(
+        useMaterial3: true,
       ),
+      home: const KatalogPage(),
     );
   }
 }

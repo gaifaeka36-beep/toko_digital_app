@@ -28,7 +28,6 @@ class DBHelper {
         await db.execute('DROP TABLE IF EXISTS local_cart');
         await _createDB(db, newVersion);
       },
-      // Bagian onOpen sengaja dihapus agar data produk baru tersimpan permanen
     );
   }
 
